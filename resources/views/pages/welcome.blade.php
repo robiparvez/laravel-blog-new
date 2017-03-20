@@ -21,31 +21,18 @@
 
     <div class="row">
         <div class="col-md-8">
-            <div class="post">
-                <h3>Post Title</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua...</p>
-                <a href="#" class="btn btn-primary">Read More</a>
-            </div>
+
+
+            @foreach ($posts as $post)
+                <div class="post">
+                    <h3>{{ $post->title }}</h3>
+                    <p>{{ $post->body }}</p>
+                    <a href="#" class="btn btn-primary">Read More</a>
+                </div>
             <hr/>
 
-            <div class="post">
-                <h3>Post Title</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua...</p>
+            @endforeach
 
-                <a href="#" class="btn btn-primary">Read More</a>
-            </div>
-            <hr/>
-
-            <div class="post">
-                <h3>Post Title</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua...</p>
-
-                <a href="#" class="btn btn-primary">Read More</a>
-            </div>
-            <hr/>
         </div>
         <div class="col-md-3 col-md-offset-1">
             <h2>SideBar</h2>
