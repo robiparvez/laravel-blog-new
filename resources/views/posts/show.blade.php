@@ -19,22 +19,39 @@
 		    <div class="col-md-4">
 		        <div class="well">
 		            <dl class="dl-horizontal">
-		                <dt>
+		                <label>
 		                    Created at:
-		                </dt>
-		                <dd>
+		                </label>
+		                <p>
 		                     {{ date('M j, Y  h:ia', strtotime($post->created_at))	 }}
-		                </dd>
+		                </p>
 		            </dl>
 
 
 		            <dl class="dl-horizontal">
-		                <dt>
+
+			            	<label>Url Slug:</label>
+		                    <a href="{{ url('blog/'. $post->slug)  }}">{{ url('blog/'. $post->slug)  }}</a>
+
+		            </dl>
+
+
+		            <dl class="dl-horizontal">
+
+			            	<label>Current Category:</label>
+		                    <p>{{ $post->category->name }}</p>
+
+		            </dl>
+
+
+		            <dl class="dl-horizontal">
+		                <label>
 		                    Last Updated:
-		                </dt>
-		                <dd>
+		                </label>
+		                <p>
 		                    {{ date('M j, Y  h:ia', strtotime($post->updated_at)) }}
-		                </dd>
+		                </p>
+
 		                <hr>
 
 		                <div class="row">

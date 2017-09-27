@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-
-use Session;
+use App\Category;
 use App\Post;
+use Illuminate\Http\Request;
+use Session;
 
 class PostController extends Controller
 {
@@ -18,26 +17,33 @@ class PostController extends Controller
         $posts = Post::orderBy('id', 'asc')->paginate(5);
 
         //return a view and pass in the above variable
-        return view('posts.index')->with('posts',$posts);
+        return view('posts.index')->with('posts', $posts);
     }
 
     public function create()
     {
-        return view('posts.create');
+        $categories = Category::all();
+
+        //return create view
+        return view('posts.create')->withCategories($categories);
     }
 
     public function store(Request $request)
     {
         //Validate the data
         $this->validate($request, [
-            'title' => 'required|unique:posts|max:255',
-            'body'  => 'required',
+            'title'       => 'required|unique:posts,title|max:255',
+            'body'        => 'required',
+            'category_id' => 'required|integer',
+            'slug'        => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
         ]);
 
         //store data in database
-        $post = new Post;
-        $post->title = $request->title;
-        $post->body = $request->body;
+        $post              = new Post();
+        $post->title       = $request->title;
+        $post->body        = $request->body;
+        $post->slug        = $request->slug;
+        $post->category_id = $request->category_id;
         $post->save();
 
         //Flash Message
@@ -52,8 +58,8 @@ class PostController extends Controller
         //find the post in the db and save it as a var.
         $post = Post::find($id);
 
-         //return a view, along with the created variable in the above.
-        return view('posts.show')->with('post',$post);
+        //return a view, along with the created variable in the above.
+        return view('posts.show')->with('post', $post);
 
     }
 
@@ -62,28 +68,49 @@ class PostController extends Controller
         //find the post in the db and save it as a var.
         $post = Post::find($id);
 
+        $categories = Category::all();
+
+        $cat_array = array();
+        foreach ($categories as $category) {
+                $cat_array[$category->id] = $category->name;
+        }
+
         //return a view, along with the created variable in the above.
-        return view('posts.edit')->with('post',$post);
+        return view('posts.edit')->with('post', $post)->withCategories($cat_array);
     }
 
     public function update(Request $request, $id)
     {
-        //Validate the data
-        $this->validate($request, [
-            'title' => 'required|unique:posts|max:255',
-            'body'  => 'required',
-        ]);
+        $post = Post::find($id);
 
+        if ($request->input('slug') == $post->slug)
+        {
+            //Validate the data, with slug
+            $this->validate($request, [
+                'title' => 'required|unique:posts,title|max:255',
+                'body'  => 'required',
+            ]);
+        }
+        else
+        {
+            //Validate the data, without slug
+            $this->validate($request, [
+                'title' => 'required|unique:posts,title|max:255',
+                'body'  => 'required',
+                'slug'  => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
+            ]);
+
+        }
         //Find Data
         $post = Post::find($id);
 
         $post->title = $request->input('title');
-        $post->body = $request->input('body');
+        $post->body  = $request->input('body');
+        $post->slug  = $request->input('slug');
         $post->save();
 
         //Flash Message
         $request->session()->flash('update', 'Post Successfully Updated!');
-
 
         //Redirect page
         return redirect()->route('posts.show', $post->id);

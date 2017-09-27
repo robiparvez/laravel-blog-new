@@ -2,7 +2,6 @@
 
 @section('title', '| Home')
 
-
 @section('stylesheets')
     {{-- expr --}}
     <link rel="stylesheet" type="text/css" href="">
@@ -22,15 +21,13 @@
     <div class="row">
         <div class="col-md-8">
 
-
             @foreach ($posts as $post)
                 <div class="post">
                     <h3>{{ $post->title }}</h3>
                     <p>{{ $post->body }}</p>
-                    <a href="#" class="btn btn-primary">Read More</a>
+                    <a href="{{ route('blog.single', $post->slug) }}" class="btn btn-primary">Read More</a>
                 </div>
             <hr/>
-
             @endforeach
 
         </div>
@@ -39,11 +36,3 @@
         </div>
     </div>
 @stop
-
-{{-- @section('scripts')
-    <script type="text/javascript">
-
-        confirm('Just confirming');
-
-    </script>
-@stop --}}

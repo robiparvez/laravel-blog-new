@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ config('app.locale') }}">
+<html lang="en">
 
     <head>
         @include('partials/_head')
@@ -13,13 +13,14 @@
             @include('partials/_messages')
 
             @yield('content')
+
+            @include('partials/_footer')
+
         </div>
 
-        @include('partials/_footer')
+            @include('partials/_javascript')
 
+            @yield('scripts')
 
-        @include('partials/_javascript')
-
-        @yield('scripts')
     </body>
 </html>
