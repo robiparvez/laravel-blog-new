@@ -10,6 +10,7 @@ Route::get('/', 'PagesController@getIndex');
 Route::get('/about', 'PagesController@getAbout');
 
 Route::get('/contact', 'PagesController@getContact');
+Route::post('/contact', 'PagesController@getContact');
 
 
 // resource route
@@ -17,10 +18,14 @@ Route::resource('/posts', 'PostController');
 
 Route::resource('/categories', 'CategoryController', ['except' => 'create']);
 
+Route::resource('/tags', 'TagsController',['except' => 'create']);
+
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+
 // Route::get('auth/logut', 'Auth\LoginController@getLogout');
 
 // Route::get('auth/login', 'Auth\LoginController@getLogin');

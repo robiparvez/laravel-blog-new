@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Category;
 use App\Post;
+use App\Tag;
 use Illuminate\Http\Request;
 use Session;
 
@@ -23,16 +25,20 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
+        $tags       = Tag::all();
 
         //return create view
-        return view('posts.create')->withCategories($categories);
+        return view('posts.create')->withCategories($categories)->withTags($tags);
     }
 
     public function store(Request $request)
     {
+
+        // dd($request);
+
         //Validate the data
         $this->validate($request, [
-            'title'       => 'required|unique:posts,title|max:255',
+            'title'       => 'required|max:255',
             'body'        => 'required',
             'category_id' => 'required|integer',
             'slug'        => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
@@ -45,6 +51,9 @@ class PostController extends Controller
         $post->slug        = $request->slug;
         $post->category_id = $request->category_id;
         $post->save();
+
+        //many-to-many relationship syncing
+        $post->tags()->sync($request->tags, false);
 
         //Flash Message
         $request->session()->flash('success', 'Post is Successfully Saved!');
@@ -68,15 +77,24 @@ class PostController extends Controller
         //find the post in the db and save it as a var.
         $post = Post::find($id);
 
+        //assoc array of category for using in view
         $categories = Category::all();
+        $cat_array  = array();
+        foreach ($categories as $category)
+        {
+            $cat_array[$category->id] = $category->name;
+        }
 
-        $cat_array = array();
-        foreach ($categories as $category) {
-                $cat_array[$category->id] = $category->name;
+        $tags = Tag::all();
+        //assoc array of tags for using in view
+        $tags_array = array();
+        foreach ($tags as $tag)
+        {
+            $tags_array[$tag->id] = $tag->name;
         }
 
         //return a view, along with the created variable in the above.
-        return view('posts.edit')->with('post', $post)->withCategories($cat_array);
+        return view('posts.edit')->with('post', $post)->withCategories($cat_array)->withTags($tags_array);
     }
 
     public function update(Request $request, $id)
@@ -87,7 +105,7 @@ class PostController extends Controller
         {
             //Validate the data, with slug
             $this->validate($request, [
-                'title' => 'required|unique:posts,title|max:255',
+                'title' => 'required|max:255',
                 'body'  => 'required',
             ]);
         }
@@ -95,19 +113,31 @@ class PostController extends Controller
         {
             //Validate the data, without slug
             $this->validate($request, [
-                'title' => 'required|unique:posts,title|max:255',
-                'body'  => 'required',
-                'slug'  => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
+                'title'       => 'required|max:255',
+                'body'        => 'required',
+                'category_id' => 'required|integer',
+                'slug'        => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
             ]);
 
         }
         //Find Data
-        $post = Post::find($id);
-
-        $post->title = $request->input('title');
-        $post->body  = $request->input('body');
-        $post->slug  = $request->input('slug');
+        $post              = Post::find($id);
+        $post->title       = $request->input('title');
+        $post->body        = $request->input('body');
+        $post->slug        = $request->input('slug');
+        $post->category_id = $request->input('category_id');
         $post->save();
+
+        //Checks whether a tag is empty or not
+        if (isset($request->tags))
+        {
+            //many-to-many relationship syncing
+            $post->tags()->sync($request->tags, true);
+        }
+        else
+        {
+            $post->tags()->sync(array());
+        }
 
         //Flash Message
         $request->session()->flash('update', 'Post Successfully Updated!');
@@ -120,10 +150,13 @@ class PostController extends Controller
     {
         //find the post in the db and save it as a var.
         $post = Post::find($id);
+
+        $post->tags()->detach();
+
         $post->delete();
 
         //Flash Message [can't use $request here]
-        Session::flash('delete', 'Post Successfully Deleted!');
+        Session::flash('Delete', 'Post Successfully Deleted!');
 
         //Redirect page
         return redirect()->route('posts.index');

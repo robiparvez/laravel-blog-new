@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Http\Requests;
+
 use App\Post;
+
 
 class PagesController extends Controller
 {
@@ -48,8 +51,7 @@ class PagesController extends Controller
         //with_using array
         return view('pages.about')->withData($data);
 
-
-        return view('pages.about');
+        // return view('pages.about');
     }
 
     public function getContact()
@@ -57,39 +59,37 @@ class PagesController extends Controller
         return view('pages.contact');
     }
 
-    // public function index()
-    // {
-    //     //
-    // }
 
-    // public function create()
-    // {
-    //     //
-    // }
+    public function postContact(Request $request)
+    {
+        $this->validate($request,array([
+            'email' => 'required|email',
+            'subject' => 'min:4',
+            'message' => 'max:10'
+        ]));
 
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
 
-    // public function show($id)
-    // {
-    //     //
-    // }
+        Mail::send('emails.contact', $data, function ($message) {
+            $message->from('john@johndoe.com', 'John Doe');
+            $message->sender('john@johndoe.com', 'John Doe');
 
-    // public function edit($id)
-    // {
-    //     //
-    // }
+            $message->to('john@johndoe.com', 'John Doe');
 
-    // public function update(Request $request, $id)
-    // {
-    //     //
-    // }
+            $message->cc('john@johndoe.com', 'John Doe');
+            $message->bcc('john@johndoe.com', 'John Doe');
 
-    // public function destroy($id)
-    // {
-    //     //
-    // }
+            $message->replyTo('john@johndoe.com', 'John Doe');
+
+            $message->subject('Subject');
+
+            $message->priority(3);
+
+            $message->attach('pathToFile');
+        });
+
+
+
+
+    }
 
 }

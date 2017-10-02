@@ -22,7 +22,7 @@ class Post extends Model
 	/*Tag relationship*/
 	public function tags()
 	{
-		return $this->belongstoMany('App\Tag');
+		return $this->belongstoMany('App\Tag','post_tag','post_id','tag_id');
 	}
 
 }

@@ -2,6 +2,12 @@
 
 @section('title', '| View Post')
 
+{{-- Select2 and parsley css --}}
+@section('stylesheets')
+    {!! Html::style('css/parsley.css') !!}
+    {!! Html::style('css/select2.min.css') !!}
+@stop
+
 @section('content')
 
 	<div class="container">
@@ -16,12 +22,13 @@
 				{{ Form::label('Slug', 'Slug:', ['class' => 'form-spacing-top']) }}
                 {{ Form::text('slug', null, ['class' => 'form-control']) }}
 
+				{{-- Categpry --}}
                 {{ Form::label('category_id', 'Category:', ['class' => 'form-spacing-top']) }}
-
-
-
-
                 {!! Form::select('category_id', $categories, null, ['class' => 'form-control']) !!}
+
+				{{-- Tags --}}
+				{!! Form::label('tags', 'Tags:', ['class' => 'form-spacing-top']) !!}
+                {!! Form::select('tags[]', $tags, null, ['class' => 'form-control select2-multi', 'multiple' => 'multiple']) !!}
 
 				{{--
             	<select class="form-control" name="category_id">
@@ -72,4 +79,16 @@
 		</div>
 	</div>
 
+@stop
+
+{{--Select2 and Parsley script--}}
+@section('scripts')
+    {!! Html::script('js/parsley.min.js') !!}
+    {!! Html::script('js/select2.min.js') !!}
+
+
+    <script type="text/javascript">
+        $('.select2-multi').select2();
+        $('.select2-multi').select2().val({{ json_encode($post->tags()->allRelatedids()) }}).trigger('change');
+    </script>
 @stop
