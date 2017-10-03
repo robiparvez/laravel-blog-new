@@ -26,6 +26,10 @@ class BlogController extends Controller
 }
 
 
+
+
+
+
 	// public function getIndex($slug)
  //    {
  //    	//fetch from view based on pagination
