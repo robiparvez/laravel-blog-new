@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'port' => env('MAIL_PORT', 587),
+    'port' => env('MAIL_PORT', 2525),
 
     /*
     |--------------------------------------------------------------------------
@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', '286c552a6f-9ae2e9@inbox.mailtrap.io'),
-        'name' => env('MAIL_FROM_NAME', 'Laravel App'),
+        'address' => env('MAIL_FROM_ADDRESS', 'from@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
     /*
