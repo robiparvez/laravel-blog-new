@@ -2,8 +2,8 @@
 
 @section('title', "| Edit Tag" )
 
-
 @section('content')
+
 <div class="row">
     <div class="col-md-6">
 
