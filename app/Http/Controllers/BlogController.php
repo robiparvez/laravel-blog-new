@@ -24,12 +24,6 @@ class BlogController extends Controller
     	return view('blog.single')->withPost($post);
     }
 }
-
-
-
-
-
-
 	// public function getIndex($slug)
  //    {
  //    	//fetch from view based on pagination
