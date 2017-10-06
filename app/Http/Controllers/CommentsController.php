@@ -55,22 +55,46 @@ class CommentsController extends Controller
 
     public function edit($id)
     {
+        $cmnt = Comment::find($id);
+
+        return view('comments.edit')->withCmnt($cmnt);
         //
     }
 
     public function update(Request $request, $id)
     {
-        //
+        $comment_update = Comment::find($id);
+
+        $this->validate($request, [
+            'comment' => 'required|min:6|max:2000',
+        ]);
+
+        $comment_update->comment = $request->comment;
+
+        $comment_update->save();
+
+        $request->session()->flash('success', 'Comment Updated!');
+
+        return redirect()->route('posts.show', $comment_update->post->id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function delete($id)
+    {
+        $cmntDelete = Comment::find($id);
+
+        return view('comments.delete')->withCmntDelete($cmntDelete);
+    }
+
     public function destroy($id)
     {
-        //
+        $cmntDestroy = Comment::find($id);
+
+        $post_del_id = $cmntDestroy->post->id;
+
+        $cmntDestroy->delete();
+
+        Session::flash('Deleted', 'Comment Deleted!');
+
+        return redirect()->route('posts.show', $post_del_id);
     }
 }

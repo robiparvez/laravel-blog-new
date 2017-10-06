@@ -23,13 +23,40 @@ title); ?>
         </hr>
     </div>
 </div>
+
+
+{{-- @php
+
+
+{{ echo urlencode('https://scontent.fdac5-1.fna.fbcdn.net/v/t1.0-9/14993516_10207467743481755_1773707475555528407_n.jpg?oh=790dfde092edf7586c13ff4dc49132f0&oe=5A7ED252') }}
+@endphp --}}
+
+
+
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
+        <h2 class="comments-title">
+            <span class="glyphicon glyphicon-comment">
+            </span>
+            {{ $post->comment()->count()
+             }}
+            Comments
+        </h2>
         @foreach ($post->comment as $comment_output)
         <div class="comment">
             <div class="author-info">
-                {{ $comment_output->name }}
-                    {{ $comment_output->created_at }}
+                <img class="author-image" src="{{ "https://www.gravatar.com/avatar/".  md5(strtolower(trim($comment_output->email))) .
+                "?s=50&d=monsterid"}}"  >
+
+                    <div class="author-name">
+                        <h4>
+                            {{ $comment_output->name }}
+                        </h4>
+                        <p class="author-time">
+                            {{ $comment_output->created_at->diffForHumans() }}
+                        </p>
+                    </div>
+                </img>
             </div>
             <div class="comment-content">
                 {{ $comment_output->comment }}

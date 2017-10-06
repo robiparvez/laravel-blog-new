@@ -31,9 +31,12 @@ class PagesController extends Controller
         $totalname = $firstname . " " . $lastname;
         $myemail   = 'parvezrobi@yahoo.com';
 
+        $phone ='01521108069';
+
         $data             = [];
         $data['fullname'] = $totalname;
         $data['email']    = $myemail;
+        $data['phone']    = $phone;
 
         // //with_syntax-1
         // return view('pages.about')->with('fullname',$totalname);
