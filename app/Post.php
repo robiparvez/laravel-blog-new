@@ -30,5 +30,10 @@ class Post extends Model
 		return $this->hasMany('App\Comment');
 	}
 
+	public function getBodyAttribute($body)
+	{
+		return strip_tags($body);
+	}
+
 }
 

@@ -5,7 +5,17 @@
 {{-- Select2 and parsley css --}}
 @section('stylesheets')
     {!! Html::style('css/parsley.css') !!}
-    {!! Html::style('css/select2.min.css') !!}
+    {!! Html::style('css/select2.css') !!}
+
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js">
+    </script>
+    <script type="text/javascript">
+        tinymce.init({
+                selector:'textarea',
+                plugins: "link",
+
+            });
+    </script>
 @stop
 
 @section('content')
@@ -13,7 +23,7 @@
 	<div class="container">
 		<div class="row">
 
-			{!! Form::model($post, ['route' => ['posts.update', $post->id ], 'method' => 'PUT' ]) !!}
+			{!! Form::model($post, ['route' => ['posts.update', $post->id ], 'method' => 'PUT', 'files' => true ]) !!}
 		    <div class="col-md-8">
 	            {{ Form::label('title', 'Title', []) }}
 				{{ Form::text('title', null, ['class' => 'form-control']) }}
@@ -21,6 +31,10 @@
 
 				{{ Form::label('Slug', 'Slug:', ['class' => 'form-spacing-top']) }}
                 {{ Form::text('slug', null, ['class' => 'form-control']) }}
+
+
+                {!! Form::label('image', 'Update Image:', ['class' => 'form-spacing-top']) !!}
+                {!! Form::file('image')!!}
 
 				{{-- Categpry --}}
                 {{ Form::label('category_id', 'Category:', ['class' => 'form-spacing-top']) }}
@@ -92,3 +106,4 @@
         $('.select2-multi').select2().val({{ json_encode($post->tags()->allRelatedids()) }}).trigger('change');
     </script>
 @stop
+

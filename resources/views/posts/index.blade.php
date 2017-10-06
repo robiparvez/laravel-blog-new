@@ -41,7 +41,7 @@
 
 							<td>{{ $post->title }}</td>
 
-							<td>{{ substr($post->body, 0, 50) }} {{ strlen($post->body) > 50 ? "..." : "" }}</td>
+							<td>{!! substr($post->body, 0, 50) !!} {!! strlen($post->body) > 50 ? "..." : "" !!}</td>
 
 							<td>{{ date('M j, Y',strtotime($post->created_at)) }}</td>
 

@@ -7,11 +7,15 @@ title); ?>
 @section('content')
 <div class="row">
     <div class="col-md-6 col-md-offset-2">
+
+        <h1><img src="{{ asset('images/' . $post->image ) }}" height="200" width="200" /></h1>
         <h1>
             {{ $post->title }}
         </h1>
         <p>
-            {{ $post->body }}
+            {{-- {{ $post->body }} --}}
+
+            {!! $post->body !!}
         </p>
         <hr>
             Posted in:
@@ -24,9 +28,7 @@ title); ?>
     </div>
 </div>
 
-
 {{-- @php
-
 
 {{ echo urlencode('https://scontent.fdac5-1.fna.fbcdn.net/v/t1.0-9/14993516_10207467743481755_1773707475555528407_n.jpg?oh=790dfde092edf7586c13ff4dc49132f0&oe=5A7ED252') }}
 @endphp --}}

@@ -8,11 +8,17 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8">
+
+            <h1><img src="{{ asset('images/' . $post->image ) }}" height="200" width="200" /></h1>
+
             <h1>
                 {{ $post->title }}
             </h1>
             <p class="lead">
-                {{ $post->body }}
+                {{-- {{ strip_tags($post->body) }} --}}
+                {{-- {{ strip_tags() }} --}}
+
+                {!! $post->body !!}
             </p>
             <hr>
                 <h3>

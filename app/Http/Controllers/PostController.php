@@ -6,7 +6,10 @@ use App\Category;
 use App\Post;
 use App\Tag;
 use Illuminate\Http\Request;
+use Image;
+use Purifier;
 use Session;
+use Storage;
 
 class PostController extends Controller
 {
@@ -14,8 +17,6 @@ class PostController extends Controller
     {
         //create a variable and store all the blog posts in it from the database
 
-        // $posts = Post::all();
-        // $posts = Post::paginate(5);
         $posts = Post::orderBy('id', 'asc')->paginate(5);
 
         //return a view and pass in the above variable
@@ -35,21 +36,38 @@ class PostController extends Controller
     {
 
         // dd($request);
-
         //Validate the data
         $this->validate($request, [
             'title'       => 'required|max:255',
             'body'        => 'required',
             'category_id' => 'required|integer',
             'slug'        => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
+            'image'       => 'sometimes|image',
         ]);
 
         //store data in database
         $post              = new Post();
         $post->title       = $request->title;
-        $post->body        = $request->body;
+        $post->body        = Purifier::clean($request->body);
         $post->slug        = $request->slug;
         $post->category_id = $request->category_id;
+
+        //save our image
+
+        //check if image name from blade exits
+
+        if ($request->hasFile('image'))
+        {
+
+            $image    = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+
+            Image::make($image)->resize(300, 300)->save($location);
+
+            $post->image = $filename; //Store the location of image to database
+        }
+
         $post->save();
 
         //many-to-many relationship syncing
@@ -77,7 +95,6 @@ class PostController extends Controller
         //find the post in the db and save it as a var.
         $post = Post::find($id);
 
-        //assoc array of category for using in view
         $categories = Category::all();
         $cat_array  = array();
         foreach ($categories as $category)
@@ -92,11 +109,11 @@ class PostController extends Controller
         {
             $tags_array[$tag->id] = $tag->name;
         }
-
         //return a view, along with the created variable in the above.
         return view('posts.edit')->with('post', $post)->withCategories($cat_array)->withTags($tags_array);
     }
 
+    //Update
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
@@ -107,6 +124,7 @@ class PostController extends Controller
             $this->validate($request, [
                 'title' => 'required|max:255',
                 'body'  => 'required',
+
             ]);
         }
         else
@@ -117,15 +135,35 @@ class PostController extends Controller
                 'body'        => 'required',
                 'category_id' => 'required|integer',
                 'slug'        => 'required|unique:posts,slug|alpha_dash|min:5|max:255',
+                'image'       => 'image',
             ]);
 
         }
         //Find Data
         $post              = Post::find($id);
         $post->title       = $request->input('title');
-        $post->body        = $request->input('body');
+        $post->body        = Purifier::clean($request->body);
         $post->slug        = $request->input('slug');
         $post->category_id = $request->input('category_id');
+
+        // Update image
+        if ($request->hasFile('image'))
+        {
+            //add the new photo
+            $image    = $request->file('image');
+            $filename = time() . '.' . $image->getClientOriginalExtension();
+            $location = public_path('images/' . $filename);
+            Image::make($image)->resize(300, 300)->save($location);
+
+            //Old file assigned to a variable
+            $oldfilename = $post->image;
+
+            //Update the database
+            $post->image = $filename; //Store the location of image to database
+
+            //Delete old photo
+            Storage::delete($oldfilename);
+        }
         $post->save();
 
         //Checks whether a tag is empty or not
@@ -152,6 +190,9 @@ class PostController extends Controller
         $post = Post::find($id);
 
         $post->tags()->detach();
+
+        //Delete the photo from the server , to save space
+        Storage::delete($post->image);
 
         $post->delete();
 

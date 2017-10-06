@@ -24,7 +24,8 @@
             @foreach ($posts as $post)
                 <div class="post">
                     <h3>{{ $post->title }}</h3>
-                    <p>{{ $post->body }}</p>
+                    <p>{!! substr($post->body  , 0, 25) !!} {!! strlen($post->body) > 250 ? "..." : ""  !!}</p>
+
                     <a href="{{ route('blog.single', $post->slug) }}" class="btn btn-primary">Read More</a>
                 </div>
             <hr/>
